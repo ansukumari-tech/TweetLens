@@ -1,135 +1,118 @@
-# 🧠 Human Behavior Sentiment Analysis using NLP
+# 🔍 TweetLens — Human Behavior & Sentiment Intelligence
 
-## 📌 Project Overview
-
-The **Human Behavior Sentiment Analysis System** analyzes social media tweets to understand public sentiment and behavioral patterns related to crime discussions.
-
-The system processes tweet data using a **Natural Language Processing (NLP) pipeline** including text preprocessing, crime category detection, sentiment analysis, emotion detection, and visualization.
-
-An **interactive Streamlit dashboard** allows users to explore insights, visualize crime-related sentiment trends, and analyze new tweets in real time.
-
----
-## 🚀 Features
-
-- Tweet text preprocessing and cleaning
-- Crime category detection (Phishing, Scam, Cyber Crime, Fraud, etc.)
-- Sentiment analysis using **VADER Sentiment Analyzer**
-- Emotion detection using **TextBlob**
-- Interactive **Streamlit dashboard**
-- Sentiment and emotion distribution visualizations
-- Crime vs Sentiment analysis
-- Tweet **Word Cloud visualization**
-- Map visualization of tweet locations
-- Real-time **Sentiment Predictor**
-- Dataset download from the dashboard
+> NLP pipeline classifying **sentiment**, **emotion**, and **crime categories** on 17K+ tweets with ~80% accuracy.  
+> Streamlit dashboard with **<2s inference time** · Word clouds · Heatmaps · Live tweet analyzer
 
 ---
 
-## 🛠 Technologies Used
+## 📸 Features
 
-- **Python**
-- Pandas
-- NumPy
-- NLTK
-- TextBlob
-- VADER Sentiment Analyzer
-- Matplotlib
-- Seaborn
-- WordCloud
-- Streamlit
+| Feature | Details |
+|---|---|
+| **Sentiment Analysis** | VADER + TextBlob hybrid (positive / negative / neutral) |
+| **Emotion Detection** | 7-class rule-based (joy, anger, sadness, fear, surprise, disgust, neutral) |
+| **Crime Classification** | Multi-label: phishing, scam, fraud, hate speech, harassment, misinformation |
+| **Visualizations** | Pie chart, bar chart, heatmap, timeline, word cloud |
+| **Live Analyzer** | Paste any tweet and get instant results |
+| **Export** | Download analyzed CSV |
 
 ---
 
-## ⚙️ Project Workflow
+## 🗂️ Project Structure
 
 ```
-tweets.csv
-   ↓
-collect_data.py
-   ↓
-cleaned_data.csv
-   ↓
-preprocess.py
-   ↓
-sentiment_model.py
-   ↓
-emotion_model.py
-   ↓
-visualization.py
-   ↓
-Streamlit Dashboard (app.py)
+HUMAN-BEHAVIOR-SENTIMENT/
+│
+├── app.py                  # Main Streamlit application
+│
+├── src/
+│   ├── __init__.py
+│   ├── preprocess.py       # Tweet cleaning (URL removal, normalisation)
+│   ├── sentiment_model.py  # VADER + TextBlob hybrid sentiment
+│   ├── emotion_model.py    # Keyword-lexicon emotion detection
+│   ├── crime_mapper.py     # Multi-label crime classification
+│   └── visualization.py   # Plotly chart builders
+│
+├── data/
+│   └── tweets.csv          # Your dataset (place here)
+│
+├── .streamlit/
+│   └── config.toml         # Dark theme config
+│
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## 📊 Dataset
+## ⚙️ Local Setup & Run
 
-The dataset contains tweet information used for sentiment and behavior analysis.
-
-Important columns include:
-
-- **tweet** → Original tweet text  
-- **clean_text** → Preprocessed tweet text  
-- **crime_type** → Detected crime category  
-- **city** → Simulated city location  
-- **latitude / longitude** → Map coordinates  
-- **sentiment** → Predicted sentiment label  
-- **sentiment_score** → Sentiment intensity score  
-- **emotion** → Detected emotional tone  
-
----
-
-## ▶️ How to Run the Project
-
-### 1️⃣ Install Dependencies
-
+### 1. Clone the repo
+```bash
+git clone https://github.com/ansukumari-tech/human-behavior-sentiment-analysis.git
+cd human-behavior-sentiment-analysis
 ```
+
+### 2. Create virtual environment
+```bash
+# Windows (PowerShell)
+python -m venv venv
+venv\Scripts\Activate.ps1
+
+# Mac / Linux
+python -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
 pip install -r requirements.txt
+python -m textblob.download_corpora   # Downloads TextBlob data
 ```
 
-### 2️⃣ Run Data Processing
-
+### 4. Add your dataset
 ```
-python collect_data.py
-python preprocess.py
-python crime_mapper.py
-python sentiment_model.py
-python emotion_model.py
+Place your tweets CSV in:  data/tweets.csv
+Required column: tweets (or any column with tweet text)
+Optional columns: time, username, location
 ```
 
-### 3️⃣ Launch the Streamlit Dashboard
-
-```
+### 5. Run the app
+```bash
 streamlit run app.py
 ```
 
-The application will open in your browser.
+Open **http://localhost:8501** in your browser. ✅
+---
+
+## 📊 How the Models Work
+
+### Sentiment (VADER + TextBlob Hybrid)
+```
+hybrid_score = 0.7 × VADER_compound + 0.3 × TextBlob_polarity
+
+positive  → hybrid ≥  0.05
+negative  → hybrid ≤ -0.05
+neutral   → otherwise
+```
+
+### Emotion Detection
+Rule-based keyword lexicon across 7 emotions. Each tweet is scored per emotion; highest count wins.
+
+### Crime Classification
+Pattern matching against domain-specific keyword lists across 6 crime categories. Returns first match or `none`.
 
 ---
 
-## 📊 Dashboard Features
+## 🛠️ Tech Stack
 
-The Streamlit dashboard allows users to:
-
-- View dataset statistics
-- Analyze sentiment distribution
-- Explore crime vs sentiment relationships
-- Visualize crime distribution by city
-- View tweet word cloud
-- Explore tweet locations on a map
-- Predict sentiment for new tweets
-
----
-
-## 🔮 Future Improvements
-
-- Integrate **deep learning models (LSTM / BERT)**
-- Add **real-time tweet collection using Twitter API**
-- Improve crime classification using ML models
-- Deploy the application online
-
----
-
-## 📄 License
-
-This project is open-source and intended for **educational and research purposes**.
+| Tool | Purpose |
+|---|---|
+| **Python 3.10+** | Core language |
+| **VADER** | Social media–optimised sentiment scoring |
+| **TextBlob** | Polarity + subjectivity scores |
+| **Streamlit** | Interactive web dashboard |
+| **Plotly** | Interactive charts |
+| **WordCloud** | Word frequency visualisation |
+| **Pandas / NumPy** | Data handling |
