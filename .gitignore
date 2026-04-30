@@ -1,33 +1,13 @@
-# Python cache
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-
-# Virtual environments
-venv/
-env/
-
-# Streamlit
-.streamlit/
-
-# Jupyter
-.ipynb_checkpoints/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Environment variables
 .env
-
-# Logs
-*.log
-
-# Build files
-build/
+venv/
+.venv/
+*.egg-info/
 dist/
-
-# Generated datasets
-data/cleaned_data.csv
-data/final_data.csv
+build/
+.DS_Store
+*.csv
+!data/sample_tweets.csv
+.streamlit/secrets.toml

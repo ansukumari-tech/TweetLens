@@ -1,33 +1,30 @@
-import pandas as pd
+"""
+sentiment_model.py – VADER + TextBlob hybrid sentiment analysis
+"""
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from textblob import TextBlob
 
-df = pd.read_csv("data/cleaned_data.csv")
+_vader = SentimentIntensityAnalyzer()
 
-analyzer = SentimentIntensityAnalyzer()
+def analyze_sentiment(text: str):
+    """
+    Returns (label, scores_dict).
+    label: 'positive' | 'negative' | 'neutral'
+    scores_dict: {'pos', 'neg', 'neu', 'compound', 'tb_polarity', 'tb_subjectivity'}
+    """
+    scores = _vader.polarity_scores(text)
+    tb = TextBlob(text)
+    scores["tb_polarity"] = tb.sentiment.polarity
+    scores["tb_subjectivity"] = tb.sentiment.subjectivity
 
-def get_sentiment(text):
+    # Hybrid decision: VADER compound weighted with TextBlob
+    hybrid = 0.7 * scores["compound"] + 0.3 * scores["tb_polarity"]
 
-    if pd.isna(text):
-        return "Neutral", 0
-
-    score = analyzer.polarity_scores(str(text))
-    compound = score["compound"]
-
-    if compound >= 0.05:
-        sentiment = "Positive"
-    elif compound <= -0.05:
-        sentiment = "Negative"
+    if hybrid >= 0.05:
+        label = "positive"
+    elif hybrid <= -0.05:
+        label = "negative"
     else:
-        sentiment = "Neutral"
+        label = "neutral"
 
-    return sentiment, compound
-
-# Apply sentiment analysis
-df[["sentiment","sentiment_score"]] = df["clean_text"].apply(
-    lambda x: pd.Series(get_sentiment(x))
-)
-
-# Save final dataset
-df.to_csv("data/final_data.csv", index=False)
-
-print("Sentiment analysis completed")
+    return label, scores

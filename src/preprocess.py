@@ -1,34 +1,19 @@
-import pandas as pd
+"""
+preprocess.py – Tweet cleaning utilities
+"""
 import re
-import nltk
-from nltk.corpus import stopwords
 
-try:
-    stop_words = set(stopwords.words("english"))
-except:
-    nltk.download("stopwords")
-    stop_words = set(stopwords.words("english"))
 
-df = pd.read_csv("data/cleaned_data.csv")
-
-def clean_text(text):
-
-    text = str(text)
-
-    text = re.sub(r"http\S+", "", text)      # remove URLs
-    text = re.sub(r"@\w+", "", text)         # remove mentions
-    text = re.sub(r"#\w+", "", text)         # remove hashtags
-    text = re.sub(r"[^a-zA-Z ]", "", text)   # remove symbols
+def clean_tweet(text: str) -> str:
+    """Return a cleaned, normalised version of a raw tweet string."""
+    if not isinstance(text, str):
+        return ""
     text = text.lower()
-
-    words = text.split()
-    words = [w for w in words if w not in stop_words]
-
-    return " ".join(words)
-
-df["clean_text"] = df["tweet"].apply(clean_text)
-
-print("Text preprocessing completed")
-print(df[["tweet","clean_text"]].head())
-
-df.to_csv("data/cleaned_data.csv", index=False)
+    text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)
+    text = re.sub(r"@\w+", "", text)
+    text = re.sub(r"#", "", text)
+    text = re.sub(r"^rt\s+", "", text)
+    text = re.sub(r"&amp;|&lt;|&gt;|&quot;|&#39;", " ", text)
+    text = re.sub(r"[^\w\s']", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text

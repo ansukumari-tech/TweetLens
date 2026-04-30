@@ -1,51 +1,40 @@
-import pandas as pd
-import numpy as np
+"""
+crime_mapper.py – Multi-label crime classification (phishing, scam, fraud, etc.)
+"""
+import re
 
-df = pd.read_csv("data/cleaned_data.csv")
+CRIME_KEYWORDS = {
+    "phishing":   ["phishing", "click here", "verify your account", "update your info",
+                   "login link", "confirm password", "account suspended", "unusual activity"],
+    "scam":       ["scam", "fake", "win prize", "you won", "lottery", "free gift",
+                   "limited offer", "act now", "claim reward", "too good to be true"],
+    "fraud":      ["fraud", "identity theft", "stolen card", "unauthorized charge",
+                   "bank fraud", "wire transfer", "payment fraud", "false claim"],
+    "hate_speech":["terrorist", "extremist", "jihad", "infidel", "kafir", "bomb threat",
+                   "kill all", "ethnic cleansing", "genocide", "white supremacy"],
+    "harassment": ["harass", "bully", "stalk", "threaten", "doxx", "blackmail",
+                   "revenge porn", "swat", "cyberbullying"],
+    "misinformation": ["fake news", "hoax", "conspiracy", "plandemic", "deep state",
+                       "crisis actor", "false flag", "rigged election"],
+}
 
-def crime_category(text):
+def classify_crime(text: str) -> str:
+    """
+    Returns the first matched crime category or 'none'.
+    Multi-label: returns the highest-priority match.
+    """
+    text_lower = text.lower()
+    for category, keywords in CRIME_KEYWORDS.items():
+        for kw in keywords:
+            if kw in text_lower:
+                return category
+    return "none"
 
-    text = str(text).lower()
-
-    if "phishing" in text:
-        return "Phishing"
-
-    elif "scam" in text:
-        return "Scam"
-
-    elif "cyber" in text:
-        return "Cyber Crime"
-
-    elif "trafficking" in text:
-        return "Human Trafficking"
-    
-    elif "hacking" in text:
-        return "Hacking"
-    
-    elif "fraud" in text:
-        return "Fraud"
-    
-    elif "drug" in text:
-        return "Drug Related"
-    
-    elif "terror" in text:
-        return "Terrorism"
-
-    else:
-        return "Other"
-
-# Apply crime classification
-df["crime_type"] = df["tweet"].apply(crime_category)
-
-# -------- ADD CITY COLUMN --------
-cities = ["Delhi","Mumbai","Kolkata","Chennai","Bangalore","Hyderabad"]
-df["city"] = np.random.choice(cities, len(df))
-
-# -------- ADD COORDINATES --------
-df["latitude"] = np.random.uniform(8, 37, len(df))
-df["longitude"] = np.random.uniform(68, 97, len(df))
-
-# Save dataset
-df.to_csv("data/cleaned_data.csv", index=False)
-
-print("Crime classification completed")
+def classify_crime_multilabel(text: str) -> list:
+    """Returns all matched crime categories."""
+    text_lower = text.lower()
+    matched = []
+    for category, keywords in CRIME_KEYWORDS.items():
+        if any(kw in text_lower for kw in keywords):
+            matched.append(category)
+    return matched if matched else ["none"]

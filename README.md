@@ -9,7 +9,6 @@ The system processes tweet data using a **Natural Language Processing (NLP) pipe
 An **interactive Streamlit dashboard** allows users to explore insights, visualize crime-related sentiment trends, and analyze new tweets in real time.
 
 ---
-
 ## 🚀 Features
 
 - Tweet text preprocessing and cleaning
