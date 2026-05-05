@@ -3,6 +3,8 @@
 🌐 **Live Demo:**  
 https://tweetlens.streamlit.app/
 
+---
+
 > NLP pipeline classifying **sentiment**, **emotion**, and **crime categories** on 17K+ tweets with ~80% accuracy.  
 > Streamlit dashboard with **<2s inference time** · Word clouds · Heatmaps · Live tweet analyzer
 
